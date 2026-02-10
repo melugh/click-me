@@ -6,27 +6,27 @@
     <title>Can I ask you something?</title>
     
     <style>
-        /* --- THIS IS THE DESIGN CODE --- */
         body {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #ffdde1; /* This makes the background PINK */
+            background-color: #ffdde1;
             font-family: 'Arial', sans-serif;
-            overflow: hidden;
+            overflow: hidden; /* Important so hearts don't cause scrollbars */
         }
 
         .container {
             text-align: center;
             position: relative;
+            z-index: 10; /* Keeps text ON TOP of hearts */
         }
 
         .header_text {
             font-size: 50px;
             font-weight: bold;
-            color: #ff4d6d; /* Darker pink text */
+            color: #ff4d6d;
             margin-bottom: 20px;
         }
 
@@ -38,7 +38,6 @@
             margin-top: 20px;
         }
 
-        /* Makes the buttons look like bubbles */
         .btn {
             background-color: #ff4d6d;
             color: white;
@@ -49,16 +48,16 @@
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
-            flex-shrink: 0; /* Prevents button from getting squished */
+            flex-shrink: 0;
         }
 
         .yes-btn {
-            background-color: #28a745; /* Green */
+            background-color: #28a745;
             z-index: 100;
         }
 
         .no-btn {
-            background-color: #dc3545; /* Red */
+            background-color: #dc3545;
         }
 
         .gif_container img {
@@ -66,6 +65,28 @@
             height: auto;
             border-radius: 10px;
             margin-bottom: 20px;
+        }
+
+        /* --- NEW HEART STYLES --- */
+        .heart {
+            position: fixed;
+            color: #ff4d6d;
+            font-size: 20px;
+            bottom: -10vh; /* Start below screen */
+            animation: float-up linear forwards;
+            opacity: 0.6; /* Slightly see-through */
+            z-index: 1; /* Behind the text */
+        }
+
+        @keyframes float-up {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-110vh); /* Float to top */
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -84,7 +105,7 @@
     </div>
 
     <script>
-        /* --- THIS IS THE LOGIC CODE --- */
+        /* LOGIC CODE */
         const messages = [
             "Are you sure?",
             "Really sure??",
@@ -102,15 +123,12 @@
             const noBtn = document.getElementById('noBtn');
             const yesBtn = document.querySelector('.yes-btn');
 
-            // Change text
             noBtn.innerText = messages[messageIndex];
             messageIndex = (messageIndex + 1) % messages.length;
 
-            // Make Yes button bigger
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
             yesBtn.style.fontSize = `${currentSize * 1.5}px`;
             
-            // Make it wider too so it doesn't look thin
             const currentPadding = parseFloat(window.getComputedStyle(yesBtn).padding);
             yesBtn.style.padding = `${currentPadding * 1.1}px`;
         }
@@ -118,6 +136,28 @@
         function nextPage() {
             window.location.href = "yes_page.html";
         }
+
+        /* --- NEW FLOATING HEARTS FUNCTION --- */
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️'; // You can change this to 💖 or 🧸
+            
+            // Random position and size
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 2 + 's'; // 2-5 seconds speed
+            heart.style.fontSize = Math.random() * 20 + 10 + 'px'; // Random size
+            
+            document.body.appendChild(heart);
+
+            // Remove heart after it floats away to keep site fast
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+
+        // Create a new heart every 300 milliseconds
+        setInterval(createHeart, 300);
     </script>
 </body>
 </html>
